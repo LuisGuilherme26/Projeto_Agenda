@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 class Fone{
     public String label;
@@ -87,7 +88,7 @@ class Contato{
 public class Agenda{
     private List<Contato> contatos;
     
-    private int findContact(String name){
+    public int findContact(String name){
         for (int i = 0; i < contatos.size(); i++) {
             if(contatos.get(i).getName() == name){
                 return i;
@@ -96,18 +97,8 @@ public class Agenda{
         return -1;
     }
     
-    public boolean percorrer(String name){
-        for (int i = 0; i < contatos.size(); i++) {
-            if(contatos.get(i).getName() == name){
-                
-                return true;
-            }
-        }
-        return false;
-    }
-    
     public void addContact(String name, Fone fone){
-        if(percorrer(name)){
+        if(findContact(name) != -1){
             System.out.println("Ja existe esse nome");
         }else{
             contatos.add(new Contato(name, fone.label, fone.number));   
@@ -115,22 +106,27 @@ public class Agenda{
     }
     
     public boolean rmContact(String name){
-        for (int i = 0; i < contatos.size(); i++) {
-            if(contatos.get(i).getName() == name){
-                contatos.remove(i);
-                return true;
-            }
+        int pos = findContact(name);
+        if(pos == -1){
+            System.out.println("Não existe esse contato");
+            return false;
+        }else{
+            contatos.remove(pos);
+            return true;
         }
-        System.out.println("Não existe esse contato");
-        return false;
     }
     
-    public ArrayList<Contato> search(String pattern){
-        
-        return null;
+    public List<Contato> search(String pattern){
+        List<Contato> aux = new ArrayList<>();
+        for (int i = 0; i < contatos.size(); i++) {
+            if (contatos.get(i).toString().contains(pattern)) {
+                aux.add(i, contatos.get(i));
+            }
+        }
+        return aux;
     }
 
-    public List<Contato> getContact(String name) {
+    public List<Contato> getContacts(String name) {
         return contatos;
     }
     
@@ -144,8 +140,22 @@ public class Agenda{
     
     public static void main(String[] args) {
         Agenda agenda = new Agenda();
-        agenda.addContact("eva", new Fone("oi", "2525"));
-        agenda.addContact("eva", new Fone("oi", "2525"));
+        while(true){
+                Scanner tcl = new Scanner(System.in);
+                String[] ui = tcl.nextLine().split(" ");
+                if(ui[0].equals("add")){
+                    agenda.addContact(ui[1],new Fone(ui[2], ui[3]));
+                }else if(ui[0].equals("remove")){
+                    agenda.rmContact(ui[1]);
+                }else if(ui[0].equals("search")){
+                    System.out.println(agenda.search(ui[1]));
+                }else if(ui[0].equals("show")){
+                    System.out.println(agenda);
+                }else if(ui[0].equals("stop")){
+                    break;
+                }
+            }
+        
     }
     
 }
